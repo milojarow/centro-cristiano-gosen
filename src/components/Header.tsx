@@ -8,7 +8,7 @@ export function Header() {
   return <header className="bg-stone-800 text-white sticky top-0 z-50 shadow-md">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center">
-          <img src="/IMG_20250904_085233.jpg" alt="Logo IPUM" className="h-14 w-14 rounded-full mr-3" />
+          <img src="/logo_lfkjdasofsafjw.png" alt="Logo IPUM" className="h-14 w-14 rounded-full mr-3" />
           <div>
             <h1 className="text-xl font-bold">Centro Cristiano Gosén</h1>
             <p className="text-xs text-stone-300">
