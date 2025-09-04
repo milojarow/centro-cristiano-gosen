@@ -5,7 +5,7 @@ export function PastorWelcome() {
         <div className="flex flex-col md:flex-row items-center max-w-5xl mx-auto">
           <div className="md:w-2/5 mb-8 md:mb-0">
             <div className="bg-stone-100 p-2 rounded-lg shadow-md">
-              <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Pastor Aldo Hernández" className="rounded-md w-full h-auto" />
+              <img src="/pastor_kldsu9138uo24.png" alt="Pastor Aldo Hernández" className="rounded-md w-full h-auto" />
             </div>
           </div>
           <div className="md:w-3/5 md:pl-12">
