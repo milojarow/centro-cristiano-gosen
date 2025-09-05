@@ -6,7 +6,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between">
           <div className="mb-8 md:mb-0">
             <div className="flex items-center mb-4">
-              <img src="/IMG_20250904_085233.jpg" alt="Logo IPUM" className="h-12 w-12 rounded-full mr-3" />
+              <img src="/logo_lfkjdasofsafjw.png" alt="Logo IPUM" className="h-12 w-12 rounded-full mr-3" />
               <div>
                 <h3 className="text-xl font-bold">Centro Cristiano Gosén</h3>
                 <p className="text-xs text-stone-400">
@@ -103,11 +103,9 @@ export function Footer() {
               <div className="flex items-start mb-2">
                 <MapPinIcon className="text-amber-300 mr-2 mt-1 flex-shrink-0" size={18} />
                 <p className="text-stone-300">
-                  Calle Hidalgo 310, Zona Centro
+                  Hidalgo 300 B, Esq Cuarta, Centro
                   <br />
-                  Miguel Alemán, Tamaulipas
-                  <br />
-                  México, CP: 88300
+                  Miguel Alemán, Tamaulipas, México
                 </p>
               </div>
               <div className="mt-4">

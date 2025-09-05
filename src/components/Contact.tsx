@@ -80,7 +80,7 @@ export function Contact() {
               <div className="space-y-4">
                 <div className="flex items-center">
                   <PhoneIcon className="text-amber-700 mr-3" size={20} />
-                  <a href="tel:+528679801693" aria-label="Llamar al +52 867 980 1693" className="text-stone-700 hover:underline">+52 867 980 1693</a>
+                  <a href="tel:+528979801693" aria-label="Llamar al +52 897 980 1693" className="text-stone-700 hover:underline">+52 897 980 1693</a>
                 </div>
                 <div className="flex items-center">
                   <MailIcon className="text-amber-700 mr-3" size={20} />
@@ -90,8 +90,8 @@ export function Contact() {
                 </div>
                 <div className="flex items-center">
                   <MessageSquareIcon className="text-amber-700 mr-3" size={20} />
-                  <a href="https://wa.me/528679801693" target="_blank" rel="noopener noreferrer" className="text-stone-700 hover:underline" aria-label="Enviar WhatsApp al +52 867 980 1693">
-                    WhatsApp: +52 867 980 1693
+                  <a href="https://wa.me/528979801693" target="_blank" rel="noopener noreferrer" className="text-stone-700 hover:underline" aria-label="Enviar WhatsApp al +52 897 980 1693">
+                    WhatsApp: +52 897 980 1693
                   </a>
                 </div>
               </div>
