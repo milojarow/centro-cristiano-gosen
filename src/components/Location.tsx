@@ -62,12 +62,10 @@ export function Location() {
                 <ClockIcon className="text-amber-700 mr-3 mt-1 flex-shrink-0" size={20} />
                 <div>
                   <p className="font-medium text-stone-800">
-                    Horario de Oficina:
+                    Horarios de Atención:
                   </p>
-                  <p className="text-stone-600">
-                    Lunes a Viernes: 9:00 AM - 2:00 PM
-                  </p>
-                  <p className="text-stone-600">Sábado: 10:00 AM - 12:00 PM</p>
+                  <p className="text-stone-600">Domingo: 11:30 AM - 1:30 PM · Servicio</p>
+                  <p className="text-stone-600">Jueves: 5:00 PM - 7:00 PM · Enseñanza y estudio bíblico</p>
                 </div>
               </div>
             </div>
