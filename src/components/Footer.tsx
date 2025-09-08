@@ -26,7 +26,7 @@ export function Footer() {
               <a href="#" className="text-white hover:text-amber-300 transition-colors">
                 <InstagramIcon size={20} />
               </a>
-              <a href="#" className="text-white hover:text-amber-300 transition-colors">
+              <a href="https://youtube.com/@centrocristianogosen?feature=shared" target="_blank" rel="noopener noreferrer" className="text-white hover:text-amber-300 transition-colors">
                 <YoutubeIcon size={20} />
               </a>
             </div>
