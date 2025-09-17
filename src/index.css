@@ -3,3 +3,8 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 /* DO NOT DELETE THESE TAILWIND IMPORTS, OTHERWISE THE STYLING WILL NOT RENDER AT ALL */
+
+.form-notice { margin-top: 10px; font-size: .95rem; }
+.form-notice.ok  { color:#166534; background:#ecfdf5; border:1px solid #86efac; padding:10px; border-radius:8px; }
+.form-notice.err { color:#7f1d1d; background:#fef2f2; border:1px solid #fecaca; padding:10px; border-radius:8px; }
+button[disabled] { opacity:.6; cursor:not-allowed; }

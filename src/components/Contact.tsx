@@ -2,78 +2,105 @@ import React, { useEffect } from 'react';
 import { MailIcon, PhoneIcon, MessageSquareIcon } from 'lucide-react';
 export function Contact() {
   useEffect(() => {
-    const CONTACT_ENDPOINT = 'https://n8n-editor.apps.rolandoahuja.com/webhook-test/ac73dcec-1b71-43c3-8baa-41c9b5f24a16';
-    const PRAYER_ENDPOINT = 'https://n8n-editor.apps.rolandoahuja.com/webhook-test/d4811937-7aa0-4b1c-bd2f-9e1e884ca866';
+    const CONTACT_ENDPOINT = '/api/contact';
+    const PRAYER_ENDPOINT = '/api/prayer';
 
-    const $ = (id: string) => document.getElementById(id);
+    const $ = (sel: string) => document.querySelector(sel) as HTMLElement | null;
 
-    function showPreview(pre: HTMLElement | null, obj: unknown) {
-      if (!pre) return;
-      pre.hidden = false;
-      pre.textContent = JSON.stringify(obj, null, 2);
+    function getBtn(form: HTMLFormElement) {
+      return (form.querySelector('button[type="submit"], input[type="submit"]') as HTMLButtonElement | HTMLInputElement | null);
     }
 
-    function buildContactPayload() {
-      return {
-        name: (document.getElementById('name') as HTMLInputElement | null)?.value?.trim() || '',
-        email: (document.getElementById('email') as HTMLInputElement | null)?.value?.trim() || '',
-        phone: (document.getElementById('phone') as HTMLInputElement | null)?.value?.trim() || '',
-        message: (document.getElementById('message') as HTMLTextAreaElement | null)?.value?.trim() || '',
-        meta: { page: location.href, userAgent: navigator.userAgent, form: 'contact' },
-      };
+    function showNotice(el: HTMLElement | null, msg: string, type: 'ok' | 'err') {
+      if (!el) return;
+      el.classList.remove('ok', 'err');
+      el.classList.add(type);
+      el.textContent = msg;
     }
 
-    function buildPrayerPayload() {
-      return {
-        name: (document.getElementById('prayer-name') as HTMLInputElement | null)?.value?.trim() || '',
-        message: (document.getElementById('prayer-request') as HTMLTextAreaElement | null)?.value?.trim() || '',
-        meta: { page: location.href, userAgent: navigator.userAgent, form: 'prayer' },
-      };
-    }
-
-    async function wire(
-      formId: string,
-      previewId: string,
-      builder: () => { [key: string]: unknown; message?: string },
-      endpoint: string,
-    ) {
-      const form = $(formId) as HTMLFormElement | null;
-      const preview = $(previewId) as HTMLElement | null;
-      if (!form) return;
-
-      const onSubmit = async (e: Event) => {
-        e.preventDefault();
-        const payload = builder();
-        if (!payload.message || String(payload.message).length < 3) {
-          alert('Escribe un mensaje válido.');
-          return;
-        }
-        showPreview(preview, payload);
-        try {
-          const res = await fetch(endpoint, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
-          if (!res.ok) console.warn(`[${formId}] webhook HTTP ${res.status}`);
-        } catch (err) {
-          console.error(`[${formId}] webhook error`, err);
-        }
-      };
-
-      form.addEventListener('submit', onSubmit);
-      return () => form.removeEventListener('submit', onSubmit);
-    }
-
-    const cleanupFns: Array<(() => void) | void> = [];
-    cleanupFns.push(wire('contactForm', 'contactPreview', buildContactPayload, CONTACT_ENDPOINT));
-    cleanupFns.push(wire('prayerForm', 'prayerPreview', buildPrayerPayload, PRAYER_ENDPOINT));
-
-    return () => {
-      cleanupFns.forEach((fn) => {
-        if (typeof fn === 'function') fn();
+    async function postJSON(url: string, data: unknown) {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
       });
-    };
+      const text = await res.text();
+      let json: any = {};
+      try { json = text ? JSON.parse(text) : {}; } catch {}
+      return { ok: res.ok && json?.ok !== false, status: res.status, json };
+    }
+
+    // CONTACT
+    (function wireContact() {
+      const form = $('#contactForm') as HTMLFormElement | null;
+      const notice = $('#contactNotice');
+      if (!form) return;
+      form.setAttribute('novalidate', '');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+          name: (document.getElementById('name') as HTMLInputElement | null)?.value?.trim() ?? '',
+          email: (document.getElementById('email') as HTMLInputElement | null)?.value?.trim() ?? '',
+          phone: (document.getElementById('phone') as HTMLInputElement | null)?.value?.trim() ?? '',
+          message: (document.getElementById('message') as HTMLTextAreaElement | null)?.value?.trim() ?? '',
+          meta: { page: location.href, userAgent: navigator.userAgent, form: 'contact' },
+        };
+
+        const btn = getBtn(form);
+        const old = btn ? (btn as HTMLButtonElement).textContent : null;
+        if (btn) { (btn as HTMLButtonElement).disabled = true; btn.setAttribute('aria-busy', 'true'); (btn as HTMLButtonElement).textContent = 'Enviando…'; }
+
+        try {
+          const result = await postJSON(CONTACT_ENDPOINT, payload);
+          if (result.ok) {
+            showNotice(notice, '¡Gracias por ponerte en contacto con nosotros! Has dado el primer paso en tu camino a alimentar tu ser espiritual. Te responderemos pronto.', 'ok');
+            if (btn) { (btn as HTMLButtonElement).textContent = 'Enviado'; }
+          } else {
+            showNotice(notice, 'No pudimos procesar tu mensaje en este momento. Intenta nuevamente en unos minutos.', 'err');
+            if (btn) { (btn as HTMLButtonElement).disabled = false; btn.removeAttribute('aria-busy'); (btn as HTMLButtonElement).textContent = old || 'Enviar Mensaje'; }
+          }
+        } catch {
+          showNotice(notice, 'Hubo un problema de conexión. Intenta nuevamente.', 'err');
+          if (btn) { (btn as HTMLButtonElement).disabled = false; btn.removeAttribute('aria-busy'); (btn as HTMLButtonElement).textContent = old || 'Enviar Mensaje'; }
+        }
+      });
+    })();
+
+    // PRAYER
+    (function wirePrayer() {
+      const form = $('#prayerForm') as HTMLFormElement | null;
+      const notice = $('#prayerNotice');
+      if (!form) return;
+      form.setAttribute('novalidate', '');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const payload = {
+          name: (document.getElementById('prayer-name') as HTMLInputElement | null)?.value?.trim() ?? '',
+          message: (document.getElementById('prayer-request') as HTMLTextAreaElement | null)?.value?.trim() ?? '',
+          meta: { page: location.href, userAgent: navigator.userAgent, form: 'prayer' },
+        };
+
+        const btn = getBtn(form);
+        const old = btn ? (btn as HTMLButtonElement).textContent : null;
+        if (btn) { (btn as HTMLButtonElement).disabled = true; btn.setAttribute('aria-busy', 'true'); (btn as HTMLButtonElement).textContent = 'Enviando…'; }
+
+        try {
+          const result = await postJSON(PRAYER_ENDPOINT, payload);
+          if (result.ok) {
+            showNotice(notice, 'Tu petición ha sido recibida. No hay nada más poderoso que la oración. No estás solo/a — estamos contigo y estaremos orando por ti.', 'ok');
+            if (btn) { (btn as HTMLButtonElement).textContent = 'Enviado'; }
+          } else {
+            showNotice(notice, 'No pudimos procesar tu petición ahora. Intenta más tarde.', 'err');
+            if (btn) { (btn as HTMLButtonElement).disabled = false; btn.removeAttribute('aria-busy'); (btn as HTMLButtonElement).textContent = old || 'Enviar Petición'; }
+          }
+        } catch {
+          showNotice(notice, 'Hubo un problema de conexión. Intenta nuevamente.', 'err');
+          if (btn) { (btn as HTMLButtonElement).disabled = false; btn.removeAttribute('aria-busy'); (btn as HTMLButtonElement).textContent = old || 'Enviar Petición'; }
+        }
+      });
+    })();
   }, []);
 
   return <section id="contacto" className="py-16 bg-stone-100">
@@ -86,7 +113,7 @@ export function Contact() {
             <h3 className="text-2xl font-semibold mb-6 text-stone-800">
               Envíanos un Mensaje
             </h3>
-            <form id="contactForm" className="space-y-4">
+            <form id="contactForm" className="space-y-4" noValidate>
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-stone-700 mb-1">
                   Nombre Completo
@@ -117,7 +144,7 @@ export function Contact() {
                 </button>
               </div>
             </form>
-            <pre id="contactPreview" hidden>—</pre>
+            <div className="form-notice" id="contactNotice" aria-live="polite"></div>
           </div>
           <div className="lg:w-1/2 lg:pl-8">
             <h3 className="text-2xl font-semibold mb-6 text-stone-800">
@@ -129,7 +156,7 @@ export function Contact() {
                 con nosotros y nuestro equipo de intercesión estará orando por
                 tus necesidades.
               </p>
-              <form id="prayerForm" className="space-y-4">
+              <form id="prayerForm" className="space-y-4" noValidate>
                 <div>
                   <label htmlFor="prayer-name" className="block text-sm font-medium text-stone-700 mb-1">
                     Nombre (opcional)
@@ -148,7 +175,7 @@ export function Contact() {
                   </button>
                 </div>
               </form>
-              <pre id="prayerPreview" hidden>—</pre>
+              <div className="form-notice" id="prayerNotice" aria-live="polite"></div>
             </div>
             <div className="bg-amber-50 p-6 rounded-lg border border-amber-200">
               <h4 className="text-lg font-semibold mb-4 text-stone-800">
