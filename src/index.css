@@ -7,4 +7,72 @@
 .form-notice { margin-top: 10px; font-size: .95rem; }
 .form-notice.ok  { color:#166534; background:#ecfdf5; border:1px solid #86efac; padding:10px; border-radius:8px; }
 .form-notice.err { color:#7f1d1d; background:#fef2f2; border:1px solid #fecaca; padding:10px; border-radius:8px; }
-button[disabled] { opacity:.6; cursor:not-allowed; }
+button[disabled] { opacity:.6; cursor: default; }
+
+/* Progress-fill action buttons */
+.btn-ink { position: relative; overflow: hidden; isolation: isolate; }
+/* Default gradient (used for prayer) */
+.btn-ink::before {
+  content: "";
+  position: absolute;
+  inset: 0 100% 0 0; /* left to right growth */
+  width: calc(var(--p, 0) * 1%);
+  background: linear-gradient(90deg, #fde68a 0%, #fbbf24 60%, #d97706 100%);
+  opacity: .85;
+  z-index: -1;
+  transition: width .25s ease;
+}
+/* Disable the fill overlay only inside the Contáctanos section */
+#contacto .btn-ink::before { content: none !important; display: none !important; width: 0 !important; }
+
+/* Contact scheme: calm blue gradient */
+.form-contact .btn-ink::before {
+  background: linear-gradient(90deg, #93c5fd 0%, #60a5fa 55%, #2563eb 100%);
+}
+
+/* Edge-only sparkle when ready (mask-based, may not work in all browsers) */
+.btn-ink[data-ready="true"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  padding: 2px; /* ring thickness */
+  background:
+    radial-gradient(8px 8px at 14% 24%, rgba(255,255,255,.95) 0 40%, transparent 42%),
+    radial-gradient(6px 6px at 82% 28%, rgba(255,255,255,.85) 0 40%, transparent 42%),
+    radial-gradient(7px 7px at 26% 78%, rgba(255,255,255,.9) 0 40%, transparent 42%),
+    radial-gradient(6px 6px at 88% 72%, rgba(255,255,255,.8) 0 40%, transparent 42%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: edgeSparkle 2s linear infinite;
+}
+@keyframes edgeSparkle {
+  0%   { background-position: 14% 24%, 82% 28%, 26% 78%, 88% 72%; }
+  25%  { background-position: 20% 18%, 76% 22%, 30% 74%, 84% 68%; }
+  50%  { background-position: 24% 14%, 72% 18%, 34% 70%, 80% 64%; }
+  75%  { background-position: 18% 20%, 78% 26%, 28% 76%, 86% 70%; }
+  100% { background-position: 14% 24%, 82% 28%, 26% 78%, 88% 72%; }
+}
+
+/* DOM-based sparkle fallback (always works) */
+.edge-sparkles { position:absolute; inset:0; border-radius:inherit; pointer-events:none; }
+.edge-sparkles i { position:absolute; width:10px; height:10px; background: radial-gradient(circle, rgba(255,255,255,.95) 0 40%, transparent 45%); filter: drop-shadow(0 0 6px rgba(255,255,255,.6)); opacity:0; transform: translate(-50%, -50%) scale(.75) rotate(0deg); transition: opacity .9s ease, transform .55s ease; will-change: transform, opacity; }
+.edge-sparkles i.show { opacity:1; transform: translate(-50%, -50%) scale(1.05) rotate(45deg); }
+
+/* Empty-field nudge */
+.field-nudge { animation: fieldNudge .55s ease; box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.0); }
+@keyframes fieldNudge {
+  0%   { transform: scale(1); box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.0); }
+  35%  { transform: scale(1.03); box-shadow: 0 0 0 6px rgba(251, 191, 36, 0.25); }
+  70%  { transform: scale(1.01); box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.18); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.0); }
+}
+
+/* Friendly speech bubble for empty-submission notice */
+.talk-anchor { position: relative; }
+.talk-bubble { position: absolute; max-width: 22rem; background:#fff; color:#1f2937; border:1px solid #e5e7eb; border-radius:10px; padding:10px 12px; box-shadow:0 8px 24px rgba(0,0,0,.12); font-size:.95rem; z-index:50; }
+.talk-bubble[data-pos="top"]::after { content:""; position:absolute; bottom:-8px; left:18px; border-width:8px 8px 0 8px; border-style:solid; border-color:#fff transparent transparent transparent; filter: drop-shadow(0 -1px 0 #e5e7eb); }
+.talk-bubble[data-pos="bottom"]::after { content:""; position:absolute; top:-8px; left:18px; border-width:0 8px 8px 8px; border-style:solid; border-color:transparent transparent #fff transparent; filter: drop-shadow(0 1px 0 #e5e7eb); }
